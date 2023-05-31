@@ -11,7 +11,7 @@
     <property name="args.xsl" value="${dita.plugin.org.lwdita.dir}/xsl/dita2markdown${markdown.type.prefix}.xsl"/>
     <makeurl file="${dita.input.valfile}" property="dita.input.valfile.url" validate="no"/>
     <property name="dita.markdown.reloadstylesheet" value="false"/>
-    <property name="result.rewrite-rule.xsl" value="${dita.plugin.org.lwdita.dir}/xsl/custom-rules.xsl"/>
+    <!-- <property name="result.rewrite-rule.xsl" value="${dita.plugin.org.lwdita.dir}/xsl/custom-rules.xsl"/> -->
   </target>
 
   <!-- Map -->
@@ -90,7 +90,8 @@
           <param name="CSSPATH" expression="${user.csspath}" if:set="user.csspath"/>
           <param name="OUTPUTCLASS" expression="${args.markdown.toc.class}" if:set="args.markdown.toc.class"/>
           <params/>
-          <mapper type="merge" to="${args.markdown.toc}${out.ext}"/>
+          <mapper type="merge" to="${args.markdown.toc}.json"/>
+          <!-- <mapper type="merge" to="${args.markdown.toc}${out.ext}"/> -->
           <xmlcatalog refid="dita.catalog"/>
         </xslt>
       </pipeline>

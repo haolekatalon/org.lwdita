@@ -39,6 +39,9 @@
         <xsl:with-param name="key" select="'resourceid'"/>
       </xsl:call-template>
     </xsl:for-each>
+    <xsl:call-template name="get-topic-id">
+      <xsl:with-param name="values" select="//*[@id and (self::concept or self::task or self::topic or self::troubleshooting or self::glossentry or self::reference)]"/>
+    </xsl:call-template>
   </xsl:variable>
   <xsl:if test="exists($fields)">
     <head>
@@ -118,6 +121,14 @@
   <xsl:apply-templates select="@id | self::dita/*[1]/@id" mode="gen-metadata"/>
   <xsl:apply-templates select="@xml:lang | self::dita/*[1]/@xml:lang" mode="gen-metadata"/>
   -->
+</xsl:template>
+
+<!-- Get topic id -->
+<xsl:template name="get-topic-id">
+  <xsl:param name="values" as="node()*"/>
+    <entry key="id">
+      <xsl:value-of select="$values[1]/@id"/>
+    </entry>
 </xsl:template>
 
   <xsl:template name="get-value">

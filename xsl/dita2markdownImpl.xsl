@@ -35,7 +35,7 @@
   <xsl:param name="YEAR" select="format-date(current-date(), '[Y]')"/>
   
   <!-- default "output extension" processing parameter ('.html')-->
-  <xsl:param name="OUTEXT" select="'.md'"/><!-- "htm" and "html" are valid values -->
+  <xsl:param name="OUTEXT" select="'.mdx'"/><!-- "htm" and "html" are valid values -->
   
   <!-- the working directory that contains the document being transformed.
      Needed as a directory prefix for the @conref "document()" function calls.

@@ -28,22 +28,22 @@
   <xsl:template match="div" mode="tablecontent">
     <xsl:if test="@admonition">
       <xsl:choose>
-        <xsl:when test="@callout='note'">
+        <xsl:when test="@admonition='note'">
           <xsl:text>&lt;Callout  type="info" emoji="ℹ️"&gt;</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
         </xsl:when>
-        <xsl:when test="@callout='imporant'">
+        <xsl:when test="@admonition='imporant'">
           <xsl:text>&lt;Callout type="info" emoji="✅"&gt;</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
         </xsl:when>
-        <xsl:when test="@callout='tip'">
+        <xsl:when test="@admonition='tip'">
           <xsl:text>&lt;Callout emoji="💡"&gt;</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
         </xsl:when>
-        <xsl:when test="@callout='attention'">
+        <xsl:when test="@admonition='attention'">
           <xsl:text>&lt;Callout type="warning" emoji="⚠️"&gt;</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
@@ -215,7 +215,7 @@
 
   <xsl:template match="link[@href]" mode="tablecontent">
     <xsl:text>&lt;a href="</xsl:text>
-    <xsl:value-of select="@href"/>
+    <xsl:value-of select="substring-before(@href, '.mdx')"/>
     <xsl:text>" &gt;</xsl:text>
     <xsl:apply-templates mode="tablecontent"/>
     <xsl:text>&lt;&#47;a&gt;</xsl:text>
@@ -228,16 +228,30 @@
   </xsl:template>
   
   <xsl:template match="image" mode="tablecontent">
-    <xsl:text>&lt;Image img={require("</xsl:text>
-    <xsl:value-of select="@href"/>
-    <xsl:text>")} alt="</xsl:text>
-    <xsl:value-of select="@alt"/>
-    <xsl:apply-templates mode="ast"/>
-    <xsl:text>" &#47;&gt;</xsl:text>
-    <xsl:if test="@placement = 'break'">
-      <!-- <xsl:value-of select="$linefeed"/>
-      <xsl:value-of select="$linefeed"/> -->
+    <xsl:text>&lt;img src="</xsl:text>
+    <xsl:choose>
+      <xsl:when test="contains(@href, 'doc_images')">
+        <xsl:value-of select="concat('/doc_images', substring-after(@href, 'doc_images'))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="@href"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>" </xsl:text>
+    <!-- if there's width -->
+    <xsl:if test="@width">
+      <xsl:text>width={</xsl:text>
+      <xsl:value-of select="@width"/>
+      <xsl:text>} </xsl:text>
     </xsl:if>
+    <!-- if there's alt -->
+    <xsl:if test="@alt">
+      <xsl:text>alt="</xsl:text>
+      <xsl:value-of select="translate(@alt, '&quot;', '')"/>
+      <xsl:apply-templates mode="ast"/>
+      <xsl:text>" </xsl:text>
+    </xsl:if>
+    <xsl:text>&#47;&gt;</xsl:text>
   </xsl:template>
 
   <xsl:template match="span" mode="tablecontent">
@@ -256,6 +270,12 @@
     <xsl:param name="text" select="." as="xs:string"/>
     <xsl:variable name="head" select="substring($text, 1, 1)" as="xs:string"/>
     <xsl:choose>
+      <xsl:when test="contains('{', $head)">
+        <xsl:text><![CDATA[&#10100;]]></xsl:text>
+      </xsl:when>
+      <xsl:when test="contains('}', $head)">
+        <xsl:text><![CDATA[&#10101;]]></xsl:text>
+      </xsl:when>
       <xsl:when test="contains('_', $head)">
         <xsl:text><![CDATA[&#95;]]></xsl:text>
       </xsl:when>
@@ -278,6 +298,34 @@
     </xsl:if>
   </xsl:template>
   
+  <!-- Escape special characters for frontmatter -->
+  <xsl:template match="text()" mode="metdata"
+                name="textmetadata">
+    <xsl:param name="text" select="." as="xs:string"/>
+    <xsl:variable name="head" select="substring($text, 1, 1)" as="xs:string"/>
+    <!-- Edit: removed forward angle -->
+    <xsl:choose>
+      <xsl:when test="contains('\`*_{}[]()#|', $head)">
+        <xsl:value-of select="$head"/>       
+      </xsl:when>
+      <xsl:when test="contains('>', $head)">
+        <xsl:text><![CDATA[&gt;]]></xsl:text>
+      </xsl:when>
+      <xsl:when test="contains(translate($head, '&lt;', '*'), '*')">
+        <!-- variable contains "<" character -->
+        <xsl:text><![CDATA[&lt;]]></xsl:text>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="$head"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:variable name="tail" select="substring($text, 2)" as="xs:string"/>
+    <xsl:if test="string-length($tail) gt 0">
+      <xsl:call-template name="text">
+        <xsl:with-param name="text" select="substring($text, 2)" as="xs:string"/>
+      </xsl:call-template>
+    </xsl:if>
+  </xsl:template>
 
   <!-- END OF TABLECONTENT MODE #######################################-->
 
@@ -304,12 +352,12 @@
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
         </xsl:when>
-        <xsl:when test="@callout='tip'">
+        <xsl:when test="@admonition='tip'">
           <xsl:text>:::tip</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
         </xsl:when>
-        <xsl:when test="@callout='attention'">
+        <xsl:when test="@admonition='attention'">
           <xsl:text>:::caution</xsl:text>
           <xsl:value-of select="$linefeed"/>
           <xsl:value-of select="$linefeed"/>
@@ -351,18 +399,18 @@
     <xsl:value-of select="$indent"/>
     <xsl:call-template name="process-inline-contents"/>
     <xsl:value-of select="$linefeed"/>
-    <xsl:if test="parent::li and following-sibling::*[not(self::bulletlist | self::orderedlist)]">
+    <xsl:if test="(parent::li or parent::li1) and (following-sibling::*[not(self::bulletlist | self::orderedlist)] or following-sibling::*[not(self::bulletlist1 | self::orderedlist)])">
       <xsl:value-of select="$linefeed"/>
     </xsl:if>
   </xsl:template>
 
   <xsl:template match="header" mode="ast">
     <!-- Custom: Add imports -->
-    <xsl:if test="@level='1'">
+    <!-- <xsl:if test="@level='1'">
       <xsl:text>import Image from '@theme/IdealImage';</xsl:text>
       <xsl:value-of select="$linefeed"/>
       <xsl:value-of select="$linefeed"/>
-    </xsl:if>
+    </xsl:if> -->
     <xsl:for-each select="1 to xs:integer(@level)">#</xsl:for-each>
     <xsl:text> </xsl:text>
     <!--xsl:apply-templates mode="ast"/-->
@@ -641,7 +689,33 @@
   </xsl:template>
   
   <xsl:template match="image" mode="ast">
-    <xsl:text>![</xsl:text>
+    <xsl:text>&lt;img src="</xsl:text>
+    <xsl:choose>
+      <xsl:when test="contains(@href, 'doc_images')">
+        <xsl:value-of select="concat('/doc_images', substring-after(@href, 'doc_images'))"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:value-of select="@href"/>
+      </xsl:otherwise>
+    </xsl:choose>
+    <xsl:text>" </xsl:text>
+    <!-- if there's width -->
+    <xsl:if test="@width">
+      <xsl:text>width={</xsl:text>
+      <xsl:value-of select="@width"/>
+      <xsl:text>} </xsl:text>
+    </xsl:if>
+    <!-- if there's alt -->
+    <xsl:if test="@alt">
+      <xsl:text>alt="</xsl:text>
+      <xsl:value-of select="translate(@alt, '&quot;', '')"/>
+      <!-- alt text is processed differently -->
+      <xsl:apply-templates mode="ast"/>
+      <xsl:text>" </xsl:text>
+    </xsl:if>
+    <xsl:text>&#47;&gt;</xsl:text>
+
+    <!-- <xsl:text>![</xsl:text>
     <xsl:value-of select="@alt"/>
     <xsl:apply-templates mode="ast"/>
     <xsl:text>]</xsl:text>
@@ -652,7 +726,7 @@
       <xsl:value-of select="@title"/>
       <xsl:text>"</xsl:text>
     </xsl:if>
-    <xsl:text>)</xsl:text>
+    <xsl:text>)</xsl:text> -->
 
     <!-- <xsl:text>&lt;Screenshot src="</xsl:text>
     <xsl:value-of select="@href"/>
@@ -690,7 +764,7 @@
     <xsl:choose>
       <xsl:when test="contains('\`*_{}[]()#|', $head)">
         <xsl:text>\</xsl:text>
-        <xsl:value-of select="$head"/>
+        <xsl:value-of select="$head"/>       
       </xsl:when>
       <xsl:when test="contains('>', $head)">
         <xsl:text><![CDATA[&gt;]]></xsl:text>
@@ -943,7 +1017,7 @@
     <xsl:for-each select="entry">
       <xsl:value-of select="@key"/>
       <xsl:text>: </xsl:text>
-      <xsl:apply-templates mode="#current"/>
+      <xsl:apply-templates mode="metadata"/>
       <xsl:text>&#xA;</xsl:text>
     </xsl:for-each>
   </xsl:template>

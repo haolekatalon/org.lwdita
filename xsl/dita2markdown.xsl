@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0">
   
   <xsl:import href="ast2markdown.xsl"/>
+  <xsl:import href="ast2json.xsl"/>
   
   <xsl:import href="dita2markdownImpl.xsl"/>
   <!-- <xsl:import href="conceptdisplay.xsl"/>
@@ -18,7 +19,6 @@
   <xsl:import href="xml-d.xsl"/>
   
   <!--xsl:include href="markdownflag.xsl"/-->  
-  
   <xsl:output xmlns:dita="http://dita-ot.sourceforge.net" method="text" encoding="utf-8"/>
   
   <xsl:template match="/">

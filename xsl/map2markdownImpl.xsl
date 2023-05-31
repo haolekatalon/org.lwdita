@@ -16,12 +16,12 @@
     <xsl:if test="descendant::*[contains(@class, ' map/topicref ')]
                                [not(@toc = 'no')]
                                [not(@processing-role = 'resource-only')]">
-      <bulletlist>
+      <bulletlist1>
         <xsl:call-template name="commonattributes"/>
         <xsl:apply-templates select="*[contains(@class, ' map/topicref ')]" mode="toc">
           <xsl:with-param name="pathFromMaplist" select="$pathFromMaplist"/>
         </xsl:apply-templates>
-      </bulletlist>
+      </bulletlist1>
     </xsl:if>
   </xsl:template>
 
@@ -35,12 +35,12 @@
     </xsl:variable>
     <xsl:choose>
       <xsl:when test="normalize-space($title)">
-        <li>
+        <li1>
           <xsl:call-template name="commonattributes"/>
           <xsl:choose>
             <!-- If there is a reference to a DITA or HTML file, and it is not external: -->
             <xsl:when test="normalize-space(@href)">
-              <link>
+              <link1>
                 <xsl:attribute name="href">
                   <xsl:choose>
                     <xsl:when test="@copy-to and not(contains(@chunk, 'to-content')) and 
@@ -77,7 +77,7 @@
                   <xsl:attribute name="target">_blank</xsl:attribute>
                 </xsl:if-->
                 <xsl:value-of select="$title"/>
-              </link>
+              </link1>
             </xsl:when>
             <xsl:otherwise>
               <xsl:value-of select="$title"/>
@@ -87,13 +87,13 @@
           <xsl:if test="descendant::*[contains(@class, ' map/topicref ')]
                                      [not(@toc = 'no')]
                                      [not(@processing-role = 'resource-only')]">
-            <bulletlist>
+            <bulletlist1>
               <xsl:apply-templates select="*[contains(@class, ' map/topicref ')]" mode="toc">
                 <xsl:with-param name="pathFromMaplist" select="$pathFromMaplist"/>
               </xsl:apply-templates>
-            </bulletlist>
+            </bulletlist1>
           </xsl:if>
-        </li>
+        </li1>
       </xsl:when>
       <xsl:otherwise><!-- if it is an empty topicref -->
         <xsl:apply-templates select="*[contains(@class, ' map/topicref ')]" mode="toc">

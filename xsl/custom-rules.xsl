@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <xsl:stylesheet version="2.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:ditamsg="http://dita-ot.sourceforge.net/ns/200704/ditamsg"
                 exclude-result-prefixes="ditamsg">
+
 
 <xsl:template match="node() | @*">
   <xsl:copy>
@@ -10,15 +10,22 @@
   </xsl:copy>
 </xsl:template>
 
+<!-- move all images into one folder -->
 <xsl:template match="file[@format = 'image']/@result">
-  <xsl:message terminate="no">Debug message: Processing node {local-name()}</xsl:message>
-  <xsl:variable name="currentNode" select="{local-name()}"/>
-  <xsl:message terminate="no"><xsl:value-of select="$currentNode"/></xsl:message>
-  <xsl:attribute name="{local-name()}" select="concat('images/', .)"/>
+  <xsl:attribute name="{local-name()}" select="concat('doc_images/', .)"/>
 </xsl:template>
 
-<xsl:template match="file[@format = 'topic']/@result">
-  <xsl:attribute name="{local-name()}" select="concat('images/', .)"/>
+<!-- Replace all dots with underscore, except for the extension dot -->
+<xsl:template match="file[@format = 'dita']/@result">
+  <xsl:variable name="newFileName" select="concat(translate(substring-before(., '.dita'), '.', '_'), '.dita')"/>
+  <xsl:attribute name="{local-name()}" select="$newFileName"/>
 </xsl:template>
+
+<!-- Replace all dots with underscore, except for the extension dot -->
+<xsl:template match="file[@format = 'ditamap']/@result">
+  <xsl:variable name="newFileName" select="concat(translate(substring-before(., '.ditamap'), '.', '_'), '.ditamap')"/>
+  <xsl:attribute name="{local-name()}" select="$newFileName"/>
+</xsl:template>
+
 
 </xsl:stylesheet>

@@ -18,6 +18,7 @@
     <property name="args.xsl" value="${dita.plugin.org.lwdita.dir}/xsl/dita2markdown${markdown.type.prefix}.xsl"/>
     <makeurl file="${dita.input.valfile}" property="dita.input.valfile.url" validate="no"/>
     <property name="dita.markdown.reloadstylesheet" value="false"/>
+    <!-- <property name="result.rewrite-rule.xsl" value="${dita.plugin.org.lwdita.dir}/xsl/custom-rules.xsl"/> -->
   </target>
 
   <!-- Map -->

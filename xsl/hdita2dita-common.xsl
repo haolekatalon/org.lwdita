@@ -427,7 +427,7 @@
         <xsl:when test="@type">
           <xsl:attribute name="format" select="@type"/>
         </xsl:when>
-        <xsl:when test="ends-with($href, '.md')">
+        <xsl:when test="ends-with($href, '.mdx')">
           <xsl:attribute name="format">markdown</xsl:attribute>
         </xsl:when>
         <xsl:when test="ends-with($href, '.dita') or ends-with($href, '.xml')"/>
