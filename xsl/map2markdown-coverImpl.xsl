@@ -35,10 +35,10 @@
   </xsl:template>
 
   <xsl:template match="*[contains(@class, ' map/map ')]/*[contains(@class, ' topic/title ')]">
-    <header level="1">
+    <headerSidebar level="1">
       <xsl:call-template name="gen-user-panel-title-pfx"/>
       <xsl:apply-templates/>
-    </header>
+    </headerSidebar>
   </xsl:template>
 
   <xsl:template match="*[contains(@class, ' map/map ')]/@title">

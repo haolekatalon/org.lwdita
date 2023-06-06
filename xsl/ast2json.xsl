@@ -7,6 +7,14 @@
 
   <xsl:variable name="linefeed" as="xs:string" select="'&#xA;'"/>
 
+  <xsl:template match="headerSidebar" mode="ast">
+    <xsl:text> </xsl:text>
+    <!--xsl:apply-templates mode="ast"/-->
+    <!-- <xsl:text>Sidebar:</xsl:text>
+    <xsl:value-of select="$linefeed"/>
+    <xsl:value-of select="$linefeed"/> -->
+  </xsl:template>
+
   <xsl:template match="header1" mode="ast">
     <!-- Custom: Add imports -->
     <!-- <xsl:if test="@level='1'">
@@ -28,8 +36,6 @@
     <xsl:param name="indent" tunnel="yes" as="xs:string" select="''"/>
     <xsl:variable name="li1s" select="li1"/>
     <xsl:variable name="nested" select="ancestor::bulletlist1"/>
-    <xsl:variable name="liCount" select="count(li1)"/>
-    <xsl:message><xsl:value-of select="$liCount"/></xsl:message>
     <xsl:text>[</xsl:text>
       <xsl:apply-templates select="$li1s" mode="ast">
         <xsl:with-param name="totalCount" select="count($li1s)" tunnel="yes"/>

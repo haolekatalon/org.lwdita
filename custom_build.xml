@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="dist">
+    <!-- <property name="scriptFolder" value="${basedir}/custom" /> -->
+
+    <!--The DITA OT default build file-->
+    <import file="../../build.xml"/>
+    <target name="dist">
+        <!-- Initialize DITA-OT base directory -->
+        <dirname property="fileDir" file="${ant.file.DOST}" />
+        <property name="dita.dir" location="${fileDir}"/>
+        <!--Call the DITA OT default target-->
+        <antcall target="init"/>
+        <!-- Execute the shell script -->
+        <echo message="Running post-processing script"/>
+        <exec executable="sh">
+            <arg value="${dita.dir}/script.sh"/>
+        </exec>
+    </target>
+</project>

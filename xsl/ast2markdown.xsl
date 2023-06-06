@@ -215,7 +215,7 @@
 
   <xsl:template match="link[@href]" mode="tablecontent">
     <xsl:text>&lt;a href="</xsl:text>
-    <xsl:value-of select="substring-before(@href, '.mdx')"/>
+    <xsl:value-of select="@href"/>
     <xsl:text>" &gt;</xsl:text>
     <xsl:apply-templates mode="tablecontent"/>
     <xsl:text>&lt;&#47;a&gt;</xsl:text>
